@@ -21,11 +21,15 @@ func main() {
 		port = "5000"
  	}
 	http.HandleFunc("/", hijack_wrap)
+	http.HandleFunc("/web",web_test)
 	err := http.ListenAndServe(":"+port, nil)
 
 	if err != nil {
 		panic(err)
 	}
+}
+func web_test(res http.ResponseWriter, req *http.Request) {
+	fmt.Println(res,"web_test")
 }
 func hijack_wrap(res http.ResponseWriter, req *http.Request) {
 	res.Write([]byte("test"))
