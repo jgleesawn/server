@@ -17,11 +17,10 @@ func main() {
 //	http.HandleFunc("/", hello)
 //	http.HandleFunc("/test", test)
 	fmt.Println("listening...")
-//	port := os.Getenv("PORT")
-//	if port == "" {
-//		port = "5000"
-// 	}
-        port := "5000"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5000"
+ 	}
 	ln, err := net.Listen("tcp", ":"+port)
 
 	if err != nil {
