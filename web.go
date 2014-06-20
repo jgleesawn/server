@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"net"
-	//"net/http"
+	"net/http"
 	"os"
 	_ "github.com/lib/pq"
 	"database/sql"
 
 	"strconv"
 
+	//"bufio"
 )
 
 func main() {
@@ -19,20 +20,27 @@ func main() {
 	if port == "" {
 		port = "5000"
  	}
-	ln, err := net.Listen("tcp", ":"+port)
+	http.HandleFunc("/", hijack_wrap)
+	err := http.ListenAndServe(":"+port, nil)
 
 	if err != nil {
 		panic(err)
 	}
-	for {
-		conn, err := ln.Accept()
-		if err != nil {
-			continue
-		}
-		go handleConnection(conn)
-	}
 }
-func handleConnection(conn net.Conn) {
+func hijack_wrap(res http.ResponseWriter, req *http.Request) {
+	fmt.Fprintln(res, "test1")
+	hj, ok := res.(http.Hijacker)
+	if !ok {
+		http.Error(res, "server doesn't support hijacking", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintln(res, "test2")
+	conn, _, _ := hj.Hijack()
+	handleConnection(conn)
+
+
+}
+func handleConnection(conn net.Conn) { // *bufio.ReadWriter) {
 	conn.Write([]byte("Connected."))
 	db_url := os.Getenv("DATABASE_URL")
 	db_name := "demoapp_db"
@@ -84,25 +92,4 @@ func handleConnection(conn net.Conn) {
 	//	case time.Tick(time.Second)
 		}
 	}
-	var age int
-	err = db.QueryRow(`INSERT INTO users VALUES('Peter',21) RETURNING age`).Scan(&age)
-	fmt.Println(age)
-	var name string
-	err = db.QueryRow("SELECT name FROM users WHERE age = $1", age).Scan(&name)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(name)
-	name = "a"
-	err = db.QueryRow("SELECT name FROM users WHERE age = $1", age).Scan(&name)
-	fmt.Println(name)
-	fmt.Fprintf(conn,"BODY")
 }
-/*
-func test(res http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(res, "test")
-}
-func hello(res http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(res, "hello, world")
-}
-*/
