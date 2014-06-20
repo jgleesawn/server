@@ -1,5 +1,10 @@
 {
-	"ImportPath": "demoapp",
+	"ImportPath": "server",
 	"GoVersion": "go1.1.2",
-	"Deps": []
+	"Deps": [
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Rev": "1e2ccf84caca692327146254602c580cbfd0a690"
+		}
+	]
 }
