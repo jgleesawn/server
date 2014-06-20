@@ -14,8 +14,6 @@ import (
 
 func main() {
 
-//	http.HandleFunc("/", hello)
-//	http.HandleFunc("/test", test)
 	fmt.Println("listening...")
 	port := os.Getenv("PORT")
 	if port == "" {
