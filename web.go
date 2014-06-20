@@ -28,6 +28,12 @@ func main() {
 	}
 }
 func hijack_wrap(res http.ResponseWriter, req *http.Request) {
+	res.Write([]byte("test"))
+	if f, ok := res.(http.Flusher); ok { 
+		f.Flush() 
+	} else { 
+		fmt.Println("Damn, no flush"); 
+	}
 	fmt.Fprintln(res, "test1")
 	hj, ok := res.(http.Hijacker)
 	if !ok {
